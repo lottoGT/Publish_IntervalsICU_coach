@@ -1,0 +1,2 @@
+# Publish_IntervalsICU_coach
+利用CODEX或CLAUDE透過Intervals.icu建立課表,需OAuth STRAVA才能讀取完整運動資訊,運動分析報告同步OBSIDIAN
