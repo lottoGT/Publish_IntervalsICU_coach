@@ -1,0 +1,109 @@
+# Half Ironman 113km — 3-week Taper Template
+#
+# 範例：基於 80/20 Triathlon + Friel 賽前 3 週減量原則。
+# 請將 <PLACEHOLDER> 替換為您的個人數值與賽事日期。
+#
+# 使用方式：
+#   1. 複製此檔案到專案根目錄並改名（如 my-race-taper.yaml）
+#   2. 修改 athlete / race / weeks 中的占位符
+#   3. 用 scripts/post_event.py 或 coach skill 將 workouts 寫入 intervals.icu
+
+version: "2.0"
+
+athlete:
+  name: "<ATHLETE_NAME>"
+  event: "<RACE_NAME>"
+  eventDate: "<YYYY-MM-DD>"   # e.g. 2026-04-25
+  paces:
+    easy: "<m:ss/km>"          # 閾值配速 +60s/km
+    long: "<m:ss/km>"          # 閾值配速 +75s/km
+    tempo: "<m:ss/km>"         # 閾值配速 +15s/km
+    threshold: "<m:ss/km>"     # 您的跑步閾值配速
+    r400: "<m:ss>"             # 400m 重複間歇
+    r800: "<m:ss>"             # 800m 重複間歇
+  zones:
+    hr:
+      lthr: <BIKE_LTHR>        # e.g. 161
+    power:
+      ftp: <BIKE_FTP_WATTS>    # e.g. 252
+    swim:
+      css: "<m:ss>"            # e.g. "1:48"
+  unit: km
+  firstDayOfWeek: monday
+
+assessment:
+  foundation:
+    foundationLevel: intermediate   # beginner / intermediate / advanced
+    yearsInSport: <YEARS>
+  currentForm:
+    weeklyVolume: { total: <HRS>, run: <HRS>, swim: <HRS>, bike: <HRS> }
+    consistency: <1-5>
+
+race:
+  name: "<RACE_NAME>"
+  date: "<YYYY-MM-DD>"
+  location: "<CITY, COUNTRY>"
+  goals:
+    swim: "<目標配速 → 預計時間>"     # e.g. "1:45/100m → 約 33 分完成 1.9km"
+    bike: "<目標瓦數 → 預計時間>"     # e.g. "180-190w → 約 2:25 完成 90km"
+    run: "<目標配速 → 預計時間>"      # e.g. "4:30/km → 95 分完成 21.1km"
+    t1t2: "< 15 分鐘合計"
+    total: "<目標總時間區間>"
+
+phases:
+  - name: "賽前刺激週"
+    weeks: "1-1"
+    focus: "維持訓練量與強度，包含全程模擬"
+  - name: "減量週"
+    weeks: "2-2"
+    focus: "量減 25%，保留強度感"
+  - name: "賽前週"
+    weeks: "3-3"
+    focus: "量減 50%，保持感覺，充分休息"
+
+weeks:
+  - week: 1
+    phase: "賽前刺激週"
+    focus: "<該週重點，例：晚班週 + 全程模擬>"
+    notes: "<該週特殊安排說明>"
+    workouts:
+      # 課表代碼說明：
+      #   tri.halfironman(swim_mins, bike_hrs, run_mins) — 半鐵全程模擬
+      #   brick.olympic(bike_mins, run_mins)              — 標鐵磚塊
+      #   brick.long(bike_mins, run_mins)                 — 長磚
+      #   bike.tempo(mins) / bike.threshold(mins)
+      #   run.tempo(mins) / run.threshold(mins) / run.strides(mins, n)
+      #   swim.aerobic(km) / swim.threshold(km) / swim.easy(mins)
+      Wed: swim.aerobic(6)
+      Thu: brick.olympic(90, 25)
+      Fri: swim.aerobic(5)
+      Sat: run.tempo(60)
+      Sun: run.rest
+      Mon: tri.halfironman(40, 3, 60)
+      Tue: run.rest
+
+  - week: 2
+    phase: "減量週"
+    focus: "<該週重點>"
+    notes: "<注意事項>"
+    workouts:
+      Wed: swim.aerobic(6)
+      Thu: run.threshold(70)
+      Fri: bike.tempo(95)
+      Sat: swim.aerobic(5)
+      Sun: run.easy(45)
+      Mon: brick.long(180, 60)
+      Tue: run.rest
+
+  - week: 3
+    phase: "賽前週"
+    focus: "完全減量 → 比賽"
+    notes: "<賽前 7 天安排，含旅行/報到日>"
+    workouts:
+      Wed: swim.threshold(10)
+      Thu: run.strides(35, 4)
+      Fri: bike.tempo(55)
+      Sat: swim.easy(30)
+      Sun: run.rest
+      Mon: brick.sprint(35, 15, 10)
+      Tue: swim.easy(25)

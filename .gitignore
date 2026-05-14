@@ -1,0 +1,55 @@
+# ============================================================
+# SECURITY: Never commit secrets or credentials
+# ============================================================
+# intervals.icu config lives at ~/.endurance-coach/config.json
+# and is intentionally kept OUTSIDE this repo.
+# Double-protection: block common secret file patterns just in case.
+config.json
+*.env
+.env
+.env.*
+!.env.example
+secrets.*
+credentials.*
+tokens.json
+
+# SQLite database (local data, not for version control)
+*.db
+*.sqlite
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# ============================================================
+# Node / Build artifacts
+# ============================================================
+node_modules/
+dist/
+coverage/
+
+# ============================================================
+# OS / Editor
+# ============================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ============================================================
+# Generated HTML training plans (large, can be regenerated)
+# ============================================================
+*.html
+
+# ============================================================
+# Context snapshots are committed intentionally (see context/)
+# ============================================================
+endurance-coach-skill/
+# Athlete context (keep out of repo)
+.claude/

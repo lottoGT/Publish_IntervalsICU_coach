@@ -1,0 +1,94 @@
+id: tri.halfironman
+name: Half Ironman Triathlon Simulation
+sport: brick
+type: brick
+category: race
+
+params:
+  swim_mins:
+    type: int
+    required: true
+    default: 40
+    min: 30
+    max: 50
+    description: Swim duration in minutes (approx 1.9km at race pace)
+  bike_hrs:
+    type: number
+    required: true
+    default: 3
+    min: 2
+    max: 4
+    description: Bike duration in hours
+  run_mins:
+    type: int
+    required: true
+    default: 60
+    min: 30
+    max: 90
+    description: Run duration in minutes
+
+structure:
+  main:
+    - type: work
+      name: Swim - Race simulation
+      duration: "${swim_mins}min"
+      intensity: Zone 2
+      description: "Open water or pool at race effort, CSS pace"
+    - type: rest
+      name: T1
+      duration: 5min
+      description: "Transition 1 practice"
+    - type: work
+      name: Bike - Endurance
+      duration: "${(bike_hrs - 1) * 60}min"
+      power: "56-75% FTP"
+      intensity: Zone 2
+    - type: work
+      name: Bike - Race simulation
+      duration: 60min
+      power: "68-76% FTP"
+      intensity: Zone 2-3
+      description: "Final hour at race effort (180-190w)"
+    - type: rest
+      name: T2
+      duration: 5min
+      description: "Transition 2 practice"
+    - type: work
+      name: Run - Easy/Moderate
+      duration: "${run_mins}min"
+      pace: "${paces.easy}"
+      intensity: Zone 2
+
+humanReadable: |
+  HALF IRONMAN FULL RACE SIMULATION
+
+  SWIM: ${swim_mins} min open water / pool
+  - Race pace effort: CSS ${zones.swim.css}/100m
+  - Approx 1.9km
+
+  T1: Transition practice (~5 min)
+
+  BIKE: ${bike_hrs} hours total
+  - ${bike_hrs - 1} hr Zone 2 endurance (56-75% FTP)
+  - 1 hr @ race effort (68-76% FTP / 180-190w)
+
+  T2: Transition practice (~5 min)
+
+  RUN: ${run_mins} min easy
+  Pace: ${paces.easy}
+
+  Purpose: Full race rehearsal.
+  Practice nutrition, transitions, and pacing
+  strategy under fatigue conditions.
+
+  Nutrition:
+  - Pre-race breakfast simulation
+  - 60-80g carbs/hour on bike
+  - Gel + water at each run aid station
+
+  Total: ~${swim_mins + bike_hrs * 60 + run_mins + 10} min
+
+estimatedDuration: "${swim_mins + bike_hrs * 60 + run_mins + 10}"
+targetZone: Z2-Z3
+rpe: "6-7"
+notes: Full 70.3 race simulation - swim + T1 + bike + T2 + run
