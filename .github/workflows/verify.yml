@@ -1,0 +1,99 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  scan-personal-info:
+    name: Scan for personal info leaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Block known personal identifiers
+        run: |
+          # 已知曾洩漏的個人識別碼（曾在私人 repo 出現過）
+          PATTERNS='i67834|7017682|lf0gz8ugp9y0k7b4q1by0qst|9d86f64|4a4ea519'
+          MATCHES=$(grep -rE "$PATTERNS" --include='*.md' --include='*.py' --include='*.sh' --include='*.ps1' --include='*.yaml' --include='*.yml' . || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Personal identifier leak detected:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ No known personal identifiers found"
+
+      - name: Block raw credential patterns
+        run: |
+          # intervals.icu API key 格式：24 字元小寫字母+數字
+          # Strava refresh_token 格式：40 字元 hex
+          # 排除 .env.example（本來就是 placeholder）
+          MATCHES=$(grep -rE '(INTERVALS_API_KEY|STRAVA_REFRESH_TOKEN|STRAVA_CLIENT_SECRET)\s*=\s*[a-f0-9]{20,}' \
+            --include='*.md' --include='*.py' --include='*.sh' --include='*.ps1' --include='*.yaml' --include='*.yml' \
+            --exclude='.env.example' . || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Raw credential detected:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ No raw credentials in committed files"
+
+      - name: Ensure .env is gitignored
+        run: |
+          if git ls-files | grep -E '^\.env$'; then
+            echo "::error::.env is tracked in git — must be gitignored"
+            exit 1
+          fi
+          if ! grep -qE '^\.env$' .gitignore; then
+            echo "::error::.env not in .gitignore"
+            exit 1
+          fi
+          echo "✅ .env properly gitignored"
+
+  python-syntax:
+    name: Python syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile all Python files
+        run: |
+          find scripts -name '*.py' -print -exec python -m py_compile {} +
+
+  shell-lint:
+    name: Shell script lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint install scripts
+        run: |
+          # SC2086 (unquoted vars) / SC1091 (sourced files) 為 warning，不擋 build
+          shellcheck -e SC1091,SC2086 install/setup.sh install/verify.sh
+
+  markdown-links:
+    name: Markdown link check
+    runs-on: ubuntu-latest
+    continue-on-error: true  # 連結問題只報警，不擋 merge
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --offline
+            --include-fragments
+            './**/*.md'
+          fail: false
