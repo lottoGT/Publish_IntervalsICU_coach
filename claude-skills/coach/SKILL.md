@@ -145,32 +145,82 @@ curl -s -u "API_KEY:${INTERVALS_API_KEY}" \
 
 intervals.icu 的 **event `description` 欄位**支援 workout builder 語法，server 會自動解析成 `workout_doc.steps`，並同步到 Garmin/Zwift。
 
+> 官方語法參考：<https://forum.intervals.icu/t/workout-builder-syntax-quick-guide/123701>
+
 ```
-- [label] [duration] [target] [optional cadence]
+- [cue text] [duration] [target] [optional cadence]
 ```
 
 **Duration 格式：**
 - 時間：`5m`、`30s`、`1h`、`1m30s`（`m` = 分鐘，不是公尺）
-- 距離：`500mtr`、`2km`（距離用 `mtr` 避免與分鐘 `m` 混淆）
+- 短記法：`5'`（5 分）、`30"`（30 秒）、`1'30"`
+- 距離（公制）：`500mtr`、`2km`（距離用 `mtr` 避免與分鐘 `m` 混淆）
+- 距離（英制）：`1mi`、`4.5mi`
 
 **Target 格式：**
 | 類型 | 範例 |
 |------|------|
-| Pace zone | `Z1 Pace`, `Z2 Pace`, `Z1-Z2 Pace` |
 | Power zone | `Z2`, `Z3`, `Z2-Z3` |
 | FTP % | `75%`, `90-100%` |
 | 絕對功率 | `200w`, `180-220w` |
-| HR zone | `Z2 HR`, `Z3 HR` |
+| Custom zone | `CZ1`, `CZ2-CZ3` |
+| MMP | `60% MMP 5m`, `50-60% MMP 3m` |
+| Pace zone | `Z1 Pace`, `Z2 Pace`, `Z1-Z2 Pace` |
+| 閾值配速 % | `60% Pace`, `78-82% Pace` |
 | 絕對配速 | `5:00/km Pace`, `3:00/100m Pace` |
+| 配速範圍 | `1:48-1:52/100m Pace` **或** `1:48/100m-1:52/100m Pace`（單位寫一次或兩次皆可） |
+| HR zone | `Z2 HR`, `Z3 HR` |
+| Max HR % | `70% HR`, `75-80% HR` |
+| LTHR % | `95% LTHR`, `90-95% LTHR` |
 
-**間歇重複：**
+> 💡 預設目標單位視運動類型而定：Ride 預設 power、Run/Swim 預設 pace，所以跑步/游泳的 zone 後面要加 `Pace`、`HR`。
+
+**Cadence（附在 target 後）：**
 ```
-Main Set 4x
+- 10m 75% 90rpm
+- 12m 85% 90-100rpm
+```
+
+**Ramp / Freeride：**
+```
+- 10m ramp 50%-75%        # 線性遞增
+- 15m ramp 60%-90% 85rpm  # 遞增 + 迴轉
+- 20m freeride            # 關閉 ERG，自由踩
+```
+
+**間歇重複（兩種寫法）：**
+
+Header 形式（推薦，會顯示「Main Set 1/5」進度）：
+```
+Main Set 5x
 - 30s Z5 Pace
 - 2m Z1 Pace
 ```
 
-**完整範例：**
+Standalone 形式：
+```
+5x
+- 30s 120%
+- 30s 50%
+```
+
+> ⚠️ Repeat 區塊前後必須各留**一空行**，否則 server 解析失敗，`workout_doc.steps = 0`。
+> ⚠️ 不支援巢狀 repeat。
+
+**Cue text（提示文字）：** 行首到第一個 duration 之間的文字會成為 step 名稱／提示。
+```
+- Warm up 5m Z1 Pace
+- Easy run 20m Z2 Pace
+- Recovery 3m 50%
+```
+
+**Timed prompt（時間軸提示）：** 用 `<!>` 分隔提示與 step：
+```
+- Cue at 0s    33^2nd cue at 33s    <!> 10m ramp 25-75%
+```
+（前段是「秒數^提示文」清單，`<!>` 後是 step 本體。）
+
+**完整跑步範例：**
 ```
 - Warm up 5m Z1 Pace
 - Easy run 20m Z2 Pace
@@ -236,7 +286,7 @@ result = subprocess.check_output([
 | CSS 閾值 | CSS（範例 `1:48/100m-1:52/100m Pace`）| 閾值課主課 |
 | 速度 | CSS - 13s 以下 | 賽季累積期以後引入 |
 
-> ⚠️ 配速範圍語法：**每個數值後都要寫單位**，例如 `1:48/100m-1:52/100m Pace`，不可寫 `1:48-1:52/100m Pace`
+> 💡 配速範圍語法兩種皆可：`1:48-1:52/100m Pace`（單位寫一次）或 `1:48/100m-1:52/100m Pace`（單位寫兩次）。為了在範圍混合多單位時不歧義，**單一寫一次的形式更簡潔**。
 
 ### 三類課表輪替
 
@@ -458,18 +508,18 @@ FTP = 20min 平均功率 × 0.95
 
 1. **節奏跑 / LT 課表**（Tempo Run）
    ```
-   - Warm up 15-20m Z1-Z2
-   - 20-40m @ LT pace（4:08/km / 164 bpm）
-   - Cool down 15m Z1
+   - Warm up 15m Z1-Z2 Pace
+   - Tempo 30m 4:08/km Pace
+   - Cool down 15m Z1 Pace
    ```
    - **業餘選手連續節奏跑優於雙閾值**（不建議單日做兩次 LT）
    - 最短恢復間距：**4 天**
 
 2. **長跑（Long Run）**
    ```
-   - 26-35 km Z1-Z2
-   - 前半 5:00/km Z1（< 132 bpm）
-   - 後半 4:40/km Z2（132-146 bpm）
+   - First half 15km 5:00/km Pace
+   - Second half 15km 4:40/km Pace
+   - Cool down 5m Z1 Pace
    ```
    - 目標距離：21–22 mi（34–35 km）；資深跑者上限 24 mi（39 km）
    - **配速比 MP 慢 10–20%**，但**不應是漫跑**（過慢強化不良跑姿）
@@ -478,9 +528,13 @@ FTP = 20min 平均功率 × 0.95
 
 3. **VO2max 間歇**
    ```
-   - Warm up 15m Z1
-   - Main Set 5x: 1km @ 5K pace + 慢跑 50-90% 時長
-   - Cool down 10m Z1
+   - Warm up 15m Z1 Pace
+
+   Main Set 5x
+   - 1km 3:50-4:00/km Pace
+   - 800mtr Z1 Pace
+
+   - Cool down 10m Z1 Pace
    ```
    - 配速：3:50–4:00/km（接近 Max HR）
    - 賽前 10 天內仍可做一次
