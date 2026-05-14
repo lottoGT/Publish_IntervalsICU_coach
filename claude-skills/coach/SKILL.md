@@ -122,6 +122,23 @@ When user asks for a training plan or race prep:
 
 ## Editing Workouts on intervals.icu via API
 
+### 🚨 強制規則 — 寫入 intervals.icu 的所有 description 必須是 Workout Builder 語法
+
+> 純文字 description **不會**產生 `workout_doc.steps`，Garmin / Zwift 無法同步、強度區間不會顯示、TSS 不會自動計算——使用者只會看到一段純文字。
+
+任何 POST / PUT 到 intervals.icu 的 `description` 必須符合：
+
+1. **格式**：每行 `- [cue] [duration] [target] [optional cadence]`，遵守下方〈Workout Builder Syntax〉小節
+2. **驗證**：POST / PUT **完之後立刻 GET 該 event**，檢查 `workout_doc.steps` 長度：
+   - `steps > 0` → 成功，可結束
+   - `steps == 0`（且 type 非 `WeightTraining` / `Other`）→ **失敗**，description 解析錯誤
+3. **失敗處置**：對照官方語法 <https://forum.intervals.icu/t/workout-builder-syntax-quick-guide/123701> 找問題（最常見：`m` 寫成 `mtr` 或反之、repeat 區塊缺空行、`Z` zone 在 Run/Swim 缺 `Pace`/`HR` 後綴），修好 description 再 PUT 一次（記得 `del event['workout_doc']`）
+
+`scripts/post_event.py` 與 `scripts/update_event.py` 已內建這個驗證並回傳 exit code 2 警告——**不要無視**這個警告就回報「課表已建立」。
+
+---
+
+
 ### Credentials
 - Athlete ID: `${INTERVALS_ATHLETE_ID}`
 - API Key: `${INTERVALS_API_KEY}`
