@@ -226,6 +226,7 @@ mytraining/
 - *Triathlete's Training Bible, 4th ed.* — Joe Friel
 - *Training and Racing with a Power Meter* — Hunter Allen, Andrew Coggan
 - *Faster, Higher, Stronger* — Sheila Taormina（游泳）
+- *Advanced Marathoning* — Pete Pfitzinger & Scott Douglas（跑步 / 馬拉松訓練）
 - 《徹底看懂自行車功率訓練數據》— 徐國峰、羅譽寅（中文版 Coggan + WKO4 入門）
 
 請購買原書支持作者。
