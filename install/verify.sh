@@ -46,7 +46,7 @@ else
 fi
 
 # .gitignore protects secrets
-cd "$REPO_ROOT"
+cd "$REPO_ROOT" || { fail "Cannot cd to repo root: $REPO_ROOT"; exit 1; }
 if git check-ignore -q .env config.json 2>/dev/null; then
     pass ".env and config.json are gitignored"
 else
