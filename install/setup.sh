@@ -123,6 +123,17 @@ Next steps:
   3. Open Claude Code and ask a training question — the coach skill
      will activate automatically.
 
+!! IMPORTANT for Strava users !!
+  If your activities are synced FROM Strava TO intervals.icu, the intervals.icu
+  API only returns 5 basic fields (no distance, no duration, no power streams).
+  This breaks TSS / TSB / CTL calculations.
+
+  Fix: Set up Strava direct sync — see SETUP.md §3.5 or docs/getting-credentials.md §3
+  Quick check after sync:
+       sqlite3 ~/.endurance-coach/coach.db \\
+         "SELECT name, distance, moving_time, source FROM activities ORDER BY start_date DESC LIMIT 5;"
+  If you see source=STRAVA with distance=0 → you need Strava direct sync.
+
 Files installed:
   ~/.claude/skills/coach/SKILL.md
   ~/.endurance-coach/Athlete_Context.md

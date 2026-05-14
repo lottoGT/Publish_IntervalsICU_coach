@@ -49,13 +49,41 @@ curl -u "API_KEY:<your_api_key>" https://intervals.icu/api/v1/athlete/<athlete_i
 
 ---
 
-## 3. Strava API（選用）
+## 3. Strava API（Strava 使用者**必設**）
 
-> 為什麼需要 Strava 直連？
->
-> intervals.icu 對 `source: STRAVA` 的活動只回 5 個欄位（type/distance/duration 都拿不到）。如果您主要用 Strava 紀錄訓練，建議加上 Strava 直連管道取得完整資料 + streams（power, HR, GPS 逐秒序列）。
->
-> 如果您主要用 Garmin Connect 或直接上傳到 intervals.icu，**可以跳過這步**。
+### 為什麼需要 Strava 直連？
+
+intervals.icu API 對 `source: STRAVA` 的活動有**嚴重限制**——只回傳這 5 個欄位：
+
+```json
+{
+  "id": "...",
+  "start_date_local": "...",
+  "type": "Ride",
+  "source": "STRAVA",
+  "external_id": "..."
+}
+```
+
+**沒有** `distance`、`moving_time`、`average_watts`、`average_heartrate`、power streams⋯⋯所有訓練負荷分析（TSS / IF / TSB / CTL / ATL）**都會壞掉**，Coach 看到的數據會像這樣：
+
+```
+本週騎乘：0km / 0h（3 場）   ← 全是 0！
+TSB：N/A（缺 TSS 數據）
+```
+
+加上 Strava 直連管道（`scripts/strava_sync.py`），系統會：
+- 從 Strava API 拉完整活動 metadata（距離、時間、平均功率/心率）
+- 抓 power / HR / cadence / GPS **逐秒 streams**（含 lap splits）
+- 覆寫本地 SQLite，補回 intervals.icu 缺失的所有欄位
+
+### 何時可以跳過？
+
+僅當您**完全不用 Strava**、所有活動是這些來源時可跳過：
+- ✅ Garmin Connect 直接同步 intervals.icu
+- ✅ Zwift 直接同步 intervals.icu
+- ✅ 手動上傳 .fit / .tcx 到 intervals.icu
+- ❌ 透過 Strava 轉送到 intervals.icu → **必設**
 
 ### 3a. 建立 Strava API Application
 

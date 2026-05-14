@@ -122,8 +122,16 @@ Coach skill 偵測到關鍵字（訓練、單車、TSB、FTP、課表…）會**
 完整教學見 [docs/getting-credentials.md](docs/getting-credentials.md)，涵蓋：
 
 1. **intervals.icu Athlete ID + API Key**（必需）
-2. **Strava API Client ID + Secret + Refresh Token**（選用，補完整 streams 資料）
+2. **Strava API Client ID + Secret + Refresh Token**（**Strava 使用者強烈建議**）
 3. **憑證儲存與安全規則**
+
+> ⚠️ **重要：Strava 使用者必看**
+>
+> 如果您的訓練資料是**從 Strava 自動同步到 intervals.icu**（一般 Garmin/Wahoo 用戶最常見的設定），intervals.icu 對這類 `source: STRAVA` 的活動**只會回傳 5 個基本欄位**——`distance`、`duration`、`moving_time` 全部為 `0`，**Coach 無法計算 TSS / IF / TSB**。
+>
+> 解法：加上 Strava 直連管道（`scripts/strava_sync.py`），系統會自動從 Strava 補完整的 power / HR / GPS 逐秒 streams 到本地資料庫。
+>
+> **不適用情境**：直接從 Garmin Connect / Zwift / 手動上傳到 intervals.icu 的活動 → intervals.icu 端資料完整，**可跳過 Strava 設定**。
 
 ---
 
