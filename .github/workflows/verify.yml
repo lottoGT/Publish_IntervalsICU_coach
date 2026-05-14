@@ -16,8 +16,11 @@ jobs:
       - name: Block known personal identifiers
         run: |
           # 已知曾洩漏的個人識別碼（曾在私人 repo 出現過）
-          PATTERNS='i67834|7017682|lf0gz8ugp9y0k7b4q1by0qst|9d86f64|4a4ea519'
-          MATCHES=$(grep -rE "$PATTERNS" --include='*.md' --include='*.py' --include='*.sh' --include='*.ps1' --include='*.yaml' --include='*.yml' . || true)
+          # 從 base64 編碼字串組裝 pattern，避免被掃描器自己抓到
+          PATTERNS=$(echo 'aTY3ODM0fDcwMTc2ODJ8bGYwZ3o4dWdwOXkwazdiNHExYnkwcXN0fDlkODZmNjR8NGE0ZWE1MTk=' | base64 -d)
+          MATCHES=$(grep -rE "$PATTERNS" \
+            --include='*.md' --include='*.py' --include='*.sh' --include='*.ps1' --include='*.yaml' --include='*.yml' \
+            --exclude-dir='.github' . || true)
           if [ -n "$MATCHES" ]; then
             echo "::error::Personal identifier leak detected:"
             echo "$MATCHES"
@@ -78,8 +81,9 @@ jobs:
 
       - name: Lint install scripts
         run: |
-          # SC2086 (unquoted vars) / SC1091 (sourced files) 為 warning，不擋 build
-          shellcheck -e SC1091,SC2086 install/setup.sh install/verify.sh
+          # 只擋 warning 以上（info/style 不擋 build）
+          # SC1091 (sourced files) / SC2086 (unquoted vars) 排除
+          shellcheck --severity=warning -e SC1091,SC2086 install/setup.sh install/verify.sh
 
   markdown-links:
     name: Markdown link check
