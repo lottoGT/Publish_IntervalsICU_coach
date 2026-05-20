@@ -364,6 +364,44 @@ CSS = (400m 時間 - 200m 時間) / 200
 
 ---
 
+## 替代游泳框架：Effortless Swimming 12 週課表（Brenton Ford）
+
+> 來源：Brenton Ford / Effortless Swimming — Half and Full Ironman Program
+> 適用：賽前 12 週、3-4 sessions/week、3 級可選（Level 1 進階 / Level 2 中階 / Level 3 入門）
+> 適合對象：自身 CSS 已建立、想在主計畫之外加入結構化游泳刺激的鐵人運動員
+
+### 課表四大類型
+
+| 代號 | 類型 | 強度 | 用途 |
+|------|------|------|------|
+| **A** | LSD / Endurance | < 80% | 長距離有氧基底，4×400 / 3×800 |
+| **B** | Speed + Skills | ~90%（短組）| 速度感 + 技術，3×700 拆段 |
+| **C** | Short Rest / Speed Endurance | 控制 → 80/90/Best HR | 短休息間歇 |
+| **D** | Open Water / Test Set | 變動 | 公開水域 / TT 測試（400m + 200m）|
+
+### 使用時機（搭配主計畫）
+
+| 場合 | 建議課表 |
+|------|---------|
+| 主計畫技術日想換口味 | 1B / 4B / 8B |
+| 主計畫 CSS / 閾值日 | 1C / 4C / 8C |
+| 公開水域長水訓練 | 2D / 5D（OW Endurance）|
+| 賽前 OW 模擬 | 8D / 11D（OW Race Sim）|
+| CSS 重測替代方案 | 1D / 4D Test Set（400TT + 200TT）|
+| 賽前一週 | 12A / 12B / 12C 三堂 race week 課表 |
+
+> **不取代整個週期化主計畫**：建議作為 Mon/Thu 主課的技術/速度刺激替代選項，量身選擇 3 個等級之一。
+
+### Test Set CSS 換算（4 個 Test Set 日：W1 / W4 / W7 / W10）
+
+```
+CSS = (400m 時間 − 200m 時間) / 200 × 100
+```
+
+每 3 週透過 Test Set 追蹤 CSS 進步軌跡；同一個 2.4km 結構不分等級，差別僅在執行品質。
+
+---
+
 ## Bike Power Training Framework
 
 > 範例：FTP=252W，LTHR=161 bpm，65kg — 請依您自己的 FTP/LTHR 換算
