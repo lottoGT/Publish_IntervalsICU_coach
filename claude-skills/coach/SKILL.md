@@ -400,6 +400,33 @@ CSS = (400m 時間 − 200m 時間) / 200 × 100
 
 每 3 週透過 Test Set 追蹤 CSS 進步軌跡；同一個 2.4km 結構不分等級，差別僅在執行品質。
 
+### Phase 3 完整 ES Library（Peaks → Race Week，共 8 條目）
+
+| 代碼 | 名稱 | 距離 | 時長 | 用途 |
+|------|------|------|------|------|
+| **8A** Diesel L3 | Diesel Recovery Long | 2.6km | 65min | 恢復週長距有氧（低強度 Z1-Z2）|
+| **8B** Back to Basics L3 | Speed + Skills | 2.4km | 60min | 技術回歸：旋轉鰭鑽 + 划頻計數 |
+| **8C** Melting Pot L3 | HR Set | 2.7km | 65min | 三段多強度（80% / 90% / Best Effort）|
+| **8D** OW Race Sim L2 | OW Race Sim | 2.5km | 65min | 公開水域模擬：3×300m + Beach Start |
+| **9A** Territory L2 | Territory Endurance | 3.7km | 85min | 最長有氧：3×800m Z2 |
+| **12A** Race Rhythm L2 | Race Rhythm Taper | 1.9km | 45min | Taper 節奏維持：3×200m + 3×100m CSS |
+| **12B** Speed Control L2 | Speed Control | 1.4km | 35min | Taper/Race Week：CSS 速控 + 快速短組 |
+| **12C** Race Prep L2 | Race Prep | 1.2km | 30min | Race Week 賽前激活：surge + fast finish |
+
+### IM 70.3 Phase 3 週課表對映（賽前 Cal 11-19，共 9 週 27 次）
+
+| 週型 | 週三 | 週五/六 | 週日 |
+|------|------|--------|------|
+| Race-Specific（高峰週）| 8C Melting Pot | 8B / 8D OW Race Sim | 9A Territory |
+| Recovery（恢復週）| **8A Diesel** | **1D CSS Test** | 8B Basics |
+| PEAK（巔峰週）| 8C Melting Pot | 8D OW Race Sim | 9A Territory |
+| Taper | **12A Race Rhythm** | **12B Speed Control** | **12A Race Rhythm** |
+| Race Week | 12B Speed Control | **12C Race Prep** | **12C Race Prep** |
+
+> ⚠️ 恢復週安排 1D CSS Test（400m+200m TT）追蹤游泳進步  
+> ⚠️ 游泳量從巔峰 3.7km → 賽前 1.2km 逐步 Taper  
+> 完整課表描述見 `es_library.json`（14 條目）
+
 ---
 
 ## Bike Power Training Framework
